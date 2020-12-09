@@ -45,7 +45,7 @@ def validatePassport(passports):
         if check == 7:
             valid += 1
             valid2 += validateData(p)
-    return valid2
+    return valid,valid2
 
 
 

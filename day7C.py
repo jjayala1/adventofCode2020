@@ -5,72 +5,59 @@ def get_data():
     data =f.readlines()
 
     for d in data:
-        d = d[0:len(d)-1]
-        d = d.replace('bags','')
-        d = d.replace('bag','')
-        d = d.replace('.','')
+
+        for r in (('\n',''),('bags',''),('bag',''),('.','')):
+            d = d.replace(*r)
 
         bags = d.split('contain')
         parent = bags[0].strip().replace(' ','_')
         childs = bags[1].strip().split(',')
-        #childs = dict(map(lambda x,y: x.strip(), childsi,split()))
-        #childs = [(c.split()) for (c) in childs]
 
         childs1 = []
         for c in childs:
             cc = c.split()
-
-            if cc[0] == 'no':
-                child = '0:no_other'
-            else:
-                child = f'{cc[0]}:{cc[1]}_{cc[2]}'
-            childs1.append(child)
+            childs1.append('0:no_other' if cc[0] == 'no' else f'{cc[0]}:{cc[1]}_{cc[2]}')
         data1.append(list([parent,childs1]))
-        #break
     f.close()
     return data1
 
 
 
-def search_childs(search_bag, num_bags = 1):
+finded1 = []
+def find_bags(bags):
 
-    global data, acum, level, cuenta
-
-    if search_bag == 'no_other':
-        print('ok')
-        level -= 1
-        #return 1
+    global data
+    finded = []
 
     for d in data:
+        for bag in bags:
+            for dd in d[1]:
+                if bag == dd.split(':')[1]:
+                    finded.append(d[0])
+                    finded1.append(d[0])
+    if len(finded)>0:
+       find_bags(finded)
+    return finded1
 
-        if f'{search_bag}' in d[0]:
 
-            if len(d[1]) > 1:
-                level +=1
+def search_childs(search_bag, num_bags = 1):
+    global data, acum
 
-            for ch in d[1]:
-                ch_data = ch.split(':')
-                ch_cant = ch_data[0]
-                ch_bag = ch_data[1]
-                mult = int(num_bags) * int(ch_cant)
-                cuenta.append(mult)
+    for rule in data:
+        if f'{search_bag}' in rule[0]:
+            for child in rule[1]:
+                child_cant, child_bag = child.split(':')
+                mult = int(num_bags) * int(child_cant)
                 acum += mult
-                print(d,mult,acum,level)
-                search_childs(ch_bag,mult)
-            #print(c[1])
-            #print(search_bag,d)
-    print('------------------')
+                #print(d,mult,acum)
+                search_childs(child_bag,mult)
+    return True
 
 
 acum = 0
-level = 0
-cuenta = []
 data = get_data()
-#for i,d in enumerate(data):
-#    print(i,d)
-#exit()
-#check_parents(data)
+tot_bags = len(set(find_bags(['shiny_gold'])))
+print(f'Part 1: {tot_bags}')
+exit()
 search_childs('shiny_gold')
-print(acum)
-#search_childs('wavy_chartreuse')
-#search_childs('dim_chartreuse')
+print(f'Part 2: {acum}')

@@ -1,6 +1,6 @@
 def clean_data():
 
-    f = open('day10b.txt','r')
+    f = open('day10.txt','r')
     data = [int(x.replace('\n','')) for x in f.readlines()]
     data.sort()
     return data

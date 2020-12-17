@@ -1,52 +1,44 @@
 def clean_data():
 
     f = open('day10.txt','r')
-    data = sorted([int(x.replace('\n','')) for x in f.readlines()])
-    data = [0, *data, data[-1] + 3 ]
-    return data
+    jolts = sorted([int(x.replace('\n','')) for x in f.readlines()])
+    jolts = [0, *jolts, jolts[-1] + 3 ]
+    return jolts
 
-def sort_adapters(data):
-    dif = [(data[i+1]-data[i]) for i in range(len(data)-1) ]
+def sort_adapters(jolts):
+    dif = [(jolts[i+1]-jolts[i]) for i in range(len(jolts)-1) ]
     return  dif.count(1) * dif.count(3)
 
 
-def count_arrangements(data):
+def count_arrangements(jolts):
 
-    new = data[:]
-    path1 = [0 for x in range(len(new)-1)]
-    path1.append(1)
+    paths = [0 for x in range(len(jolts)-1)]
+    paths.append(1)
 
-    for i in range(len(new)-1,-1,-1):
-
-        paths = 0
+    for i in range(len(jolts)-1,-1,-1):
         for j in range(1,4):
-            if i+j < len(new) and new[i+j] - new[i] <= 3:
-                paths += 1
-                path1[i] += path1[i+j]
-        #print(f'Connector: {new[i]} -- Iteration: {i} -- Paths: {paths} -- TotPaths: {path1[i]} ')
-    return path1[0]
+            if i+j < len(jolts) and jolts[i+j] - jolts[i] <= 3:
+                paths[i] += paths[i+j]
+        #print(f'Connector: {jolts[i]} -- Iteration: {i} -- Paths: {paths} -- TotPaths: {paths[i]} ')
+    return paths[0]
 
 
-def count_arrangements1(data):
+def count_arrangements1(jolts):
 
-    new = data[:]
-    path1 = [0 for x in range(1,len(new))]
-    path1.insert(0,1)
+    paths = [0 for x in range(1,len(jolts))]
+    paths.insert(0,1)
 
-    for i in range(len(new)):
-
-        paths = 0
+    for i in range(len(jolts)):
         for j in range(1,4):
-            if i-j >= 0 and new[i] - new[i-j] <= 3:
-                paths += 1
-                path1[i] += path1[i-j]
-        #print(f'Connector: {new[i]} -- Iteration: {i} -- Paths: {paths} -- TotPaths: {path1[i]}  ')
-    return path1[len(path1)-2]
+            if i-j >= 0 and jolts[i] - jolts[i-j] <= 3:
+                paths[i] += paths[i-j]
+        #print(f'Connector: {jolts[i]} -- Iteration: {i} -- Paths: {paths} -- TotPaths: {paths[i]}  ')
+    return paths[-1]
 
-data = clean_data()
-result = sort_adapters(data)
+jolts = clean_data()
+result = sort_adapters(jolts)
 print(f'Part 1: {result}')
-arrangements = count_arrangements(data)
+arrangements = count_arrangements(jolts)
 print(f'Part 2a descending: {arrangements}')
-arrangements1 = count_arrangements1(data)
+arrangements1 = count_arrangements1(jolts)
 print(f'Part 2b ascending : {arrangements1}')
